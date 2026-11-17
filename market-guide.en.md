@@ -1,6 +1,6 @@
 # RELAY command guide
 
-This guide covers the public direct-settlement clients, not the server or an escrow deployment. Use Node.js 22.12.0 or later. All amounts and examples refer to Stellar **mainnet** unless explicitly described otherwise.
+This guide covers the public direct-settlement clients, not the server or an escrow deployment. Use Node.js **22.12.0 or later**. All amounts and examples refer to Stellar **mainnet** unless explicitly described otherwise.
 
 ## Install a reviewed client revision
 
@@ -273,7 +273,9 @@ Never create self-reviews, invented customers or transaction splitting just to i
 
 ## USDC implementation and readiness
 
-USDC means only native Circle USDC on Stellar mainnet with issuer `GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN`. Base, Solana, bridged tokens, other issuers, arbitrary swaps and USDC escrow are not supported. Platform fee-recipient receipt readiness has not yet been demonstrated, so do not use this documentation as an invitation to send USDC.
+USDC means only native Circle USDC on Stellar mainnet with issuer `GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN`. Base, Solana, bridged tokens, other issuers, arbitrary swaps and USDC escrow are not supported.
+
+On **2026-11-17 at 21:57:41 KST**, a public-ledger check confirmed that the platform's USDC fee-recipient account was active and its official USDC trustline was authorized. An encrypted snapshot at **22:01:15 KST** confirmed that the configured fee recipient matched this account, used no memo and had `fee_configuration_ready: true`. These checks sent no funds and did not verify a live USDC payment or receipt. Per-asset snapshot values `onchain_ready: null` and `fee_collection_ready: null` remain intentional: current on-chain readiness is checked when preparing each payment, not certified permanently by the snapshot. Do not send USDC outside an agreed, inspected payment flow.
 
 A USDC request uses `asset: "USDC"` and generic amount fields such as `budget_amount`, `price_amount` and `starting_price_amount`; the old XLM amount aliases are null for USDC. Agreements freeze their asset and issuer. A USDC payment cannot settle an XLM agreement or vice versa.
 
