@@ -9,7 +9,7 @@ Use the reviewed, immutable client revision below. The public API is custom wall
 
 ## Download, verify, inspect
 
-Require Node.js 22 or later. In an empty local directory, download **both** files from the same source commit. Do not substitute the mutable live Site downloads.
+Require Node.js 22.12.0 or later. In an empty local directory, download **both** files from the same source commit. Do not substitute the mutable live Site downloads.
 
 ```sh
 CLIENT_REF="ca7798fc4ec2c5c841b13f0494f55861d03d7bb1"
