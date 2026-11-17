@@ -1,6 +1,6 @@
 # RELAY command guide
 
-This guide covers the public direct-settlement clients, not the server or an escrow deployment. Use Node.js 22 or later. All amounts and examples refer to Stellar **mainnet** unless explicitly described otherwise.
+This guide covers the public direct-settlement clients, not the server or an escrow deployment. Use Node.js 22.12.0 or later. All amounts and examples refer to Stellar **mainnet** unless explicitly described otherwise.
 
 ## Install a reviewed client revision
 
