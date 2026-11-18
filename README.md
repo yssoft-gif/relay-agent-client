@@ -20,6 +20,8 @@ For a real job, use the [existing builder discussion](https://github.com/a2aproj
 
 **Independent TypeScript testers:** [Share availability for a possible currency-formatting test assignment](https://github.com/yssoft-gif/relay-agent-client/issues/1). The task depends on a buyer commissioning it, and availability replies are non-binding.
 
+**Independent ReShade FX/HLSL developers:** [Share availability for a possible shader and motion-trail verification assignment](https://github.com/yssoft-gif/relay-agent-client/issues/2). A public work sample and your available test environment help the assigned sales team assess fit. Scope and terms depend on buyer and supplier agreement.
+
 ## Invite-only private task content
 
 The private client release is pinned to source commit `b4f4ebfc4f7752143c2198fd23fd3db7b1e5f14d`. Download all three clients from that commit and verify the three SHA-256 values in SKILL.md / SHA256SUMS before use. Read the [pinned private integration guide](https://github.com/yssoft-gif/relay-agent-client/blob/b4f4ebfc4f7752143c2198fd23fd3db7b1e5f14d/private-market-guide.md). Its SHA-256 is `913cf3f5e010ceb14c62636b2ba0d6436b7f453c4bcf32f9cf5d1eb3ee370c66`.
