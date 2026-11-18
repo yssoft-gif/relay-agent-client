@@ -73,7 +73,7 @@ export function amount(value){
  if(n>10000000000000n)fail('Amount exceeds the 1000000 asset-unit safety limit');return n;
 }
 export function parseFlags(args){
- const flags={},named=new Set(['site','action','file','wallet','agreement','seller','asset','max-amount','max-platform-fee-amount','max-xlm','max-network-fee-xlm','platform-wallet','max-platform-fee-xlm','seller-memo-type','seller-memo','platform-memo-type','platform-memo','journal-dir','encrypt-file','decrypt-file','output','manifest','key-file','key-output']);
+ const flags={},named=new Set(['site','action','file','wallet','private-thread','agreement','seller','asset','max-amount','max-platform-fee-amount','max-xlm','max-network-fee-xlm','platform-wallet','max-platform-fee-xlm','seller-memo-type','seller-memo','platform-memo-type','platform-memo','journal-dir','encrypt-file','decrypt-file','output','manifest','key-file','key-output']);
  for(let i=0;i<args.length;i++){
   const key=args[i].startsWith('--')?args[i].slice(2):'';if(!key||Object.hasOwn(flags,key))fail('Use unique named flags');
   if(['broadcast','sign-only','trial'].includes(key)){if(args[i+1]&&!args[i+1].startsWith('--'))fail(`--${key} is a bare explicit flag, never a string value`);flags[key]=true;}
@@ -250,7 +250,10 @@ export async function runClient(argv=process.argv.slice(2),environment=process.e
  if(!flags.agreement||!flags.seller||(!flags['max-xlm']&&!flags['max-amount']))fail('Use --agreement, --seller and --max-amount (legacy XLM: --max-xlm); USDC also requires --asset USDC. Submission additionally requires bare --broadcast');
  if(flags.asset!==undefined&&!['XLM','USDC'].includes(flags.asset))fail('--asset must be XLM or USDC on Stellar MAINNET');
  if(flags.asset==='USDC'&&(flags['max-xlm']!==undefined||flags['max-platform-fee-xlm']!==undefined))fail('USDC requires --max-amount and --max-platform-fee-amount; XLM caps apply only to network fees');
- const before=await api();if(!Array.isArray(before.agreements))fail('Site did not return agreements');const contract=before.agreements.find(a=>a.id===flags.agreement);if(!contract)fail('Agreement not found');
+ let contract;
+ if(flags['private-thread']){const data=await api({action:'get_private_thread',wallet:localSigner().publicKey(),thread_id:flags['private-thread']});contract=data.agreement??data.thread?.agreement;if(!contract||contract.private_thread_id!==flags['private-thread']||contract.id!==flags.agreement)fail('Private agreement does not match the explicit thread and agreement identifiers');}
+ else{const before=await api();if(!Array.isArray(before.agreements))fail('Site did not return agreements');contract=before.agreements.find(a=>a.id===flags.agreement);}
+ if(!contract)fail('Agreement not found');
  if(!['approved','paid'].includes(contract.status))fail('Buyer has not approved this delivery');
  const response=await api({action:'prepare_payment',agreement_id:contract.id},contract.buyer_wallet);const draft=response.draft;
  const inspected=inspectPaymentDraft(contract,draft,{asset:flags.asset??'XLM',seller:flags.seller,maxAmount:flags['max-amount'],maxXlm:flags['max-xlm'],maxPlatformFeeAmount:flags['max-platform-fee-amount'],platformWallet:flags['platform-wallet'],maxPlatformFeeXlm:flags['max-platform-fee-xlm'],maxNetworkFeeXlm:flags['max-network-fee-xlm'],sellerMemoType:flags['seller-memo-type'],sellerMemo:flags['seller-memo'],platformMemoType:flags['platform-memo-type'],platformMemo:flags['platform-memo']},{allowExpired:true});
@@ -259,6 +262,7 @@ export async function runClient(argv=process.argv.slice(2),environment=process.e
  if(flags.broadcast!==true)return;
  let prior;try{const r=await fetch(HORIZON+'/transactions/'+draft.hash,{headers:{Accept:'application/json'},redirect:'error',signal:AbortSignal.timeout(15000)});if(r.status!==404){prior=await readJson(r);if(!r.ok)fail('Cannot establish existing payment status');}}catch{fail(`Payment status is uncertain. Check the SAME hash ${draft.hash}; do not create another payment.`);}
  if(prior){checkConfirmed(prior,draft,tx.source);try{output(await api({action:'confirm_payment',agreement_id:contract.id,tx_hash:draft.hash},contract.buyer_wallet));}catch{fail(`Payment is confirmed on MAINNET. Retry Site confirmation with the SAME hash ${draft.hash}; do not pay again.`);}return;}
+ if(contract.private_thread_id&&response.private_new_payment_allowed!==true)fail('Private key or thread state changed; a new payment is blocked. Existing confirmed payments can still be reconciled.');
  if(inspected.expired)fail(`Payment draft expired. Check only the SAME hash ${draft.hash}; automatic replacement is disabled.`);
  if(localSigner().publicKey()!==tx.source)fail('Local signer does not match the buyer wallet');
  await pinPayment(flags['journal-dir']||join(homedir(),'.relay-agent','mainnet-payments'),site,contract,draft);
