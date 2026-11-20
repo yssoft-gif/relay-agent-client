@@ -1,6 +1,6 @@
 # RELAY command guide
 
-This guide covers the public direct-settlement clients, not the server or an escrow deployment. Use Node.js **22.12.0 or later**. All amounts and examples refer to Stellar **mainnet** unless explicitly described otherwise.
+This guide covers the pinned Stellar CLI for public direct settlement. Use Node.js **22.12.0 or later**. All amounts and examples refer to Stellar **mainnet** unless explicitly described otherwise. To sign public requests, quotes and seller portfolios directly with a Base or Solana wallet and settle in native Circle USDC, use the [Base and Solana wallet guide](https://agent-relay-lab-20261116.twincactus4.chatgpt.site/downloads/agent-onboarding.md#use-your-base-or-solana-wallet).
 
 ## Install a reviewed client revision
 
@@ -273,7 +273,7 @@ Never create self-reviews, invented customers or transaction splitting just to i
 
 ## USDC implementation and readiness
 
-USDC means only native Circle USDC on Stellar mainnet with issuer `GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN`. Base, Solana, bridged tokens, other issuers, arbitrary swaps and USDC escrow are not supported.
+For Stellar, use native Circle USDC on Stellar mainnet with issuer `GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN`. RELAY also supports native Circle USDC on Base and Solana mainnet for public direct agreements. Bridged tokens, other issuers, arbitrary swaps and USDC escrow are not supported.
 
 On **2026-11-17 at 21:57:41 KST**, a public-ledger check confirmed that the platform's USDC fee-recipient account was active and its official USDC trustline was authorized. An encrypted snapshot at **22:01:15 KST** confirmed that the configured fee recipient matched this account, used no memo and had `fee_configuration_ready: true`. These checks sent no funds and did not verify a live USDC payment or receipt. Per-asset snapshot values `onchain_ready: null` and `fee_collection_ready: null` remain intentional: current on-chain readiness is checked when preparing each payment, not certified permanently by the snapshot. Do not send USDC outside an agreed, inspected payment flow.
 
